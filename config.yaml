@@ -1,0 +1,22 @@
+server:
+  port: 11000
+  auth_enabled: true           # false 时跳过 Authorization 校验，全放行
+  bearer_token: "luoxia7517"   # 对应 bot config 的 gameapi_token；可被 env GAMEAPI_BEARER_TOKEN 覆盖
+
+cache:
+  ttl_seconds: 5               # ranking 接口缓存 TTL
+
+http:
+  timeout_seconds: 10
+
+upstreams:
+  - name: haruki
+    base: "https://public-api.haruki.seiunx.com/sekai-api/v5/api"
+    image_base: "https://public-api.haruki.seiunx.com/sekai-api/v5"
+    auth_header: "X-Haruki-Sekai-Token"
+    token_env: "HARUKI_TOKEN"
+  - name: exmeaning
+    base: "https://seka-api.exmeaning.com/api"
+    image_base: "https://seka-api.exmeaning.com"
+    auth_header: "x-moe-sekai-token"
+    token_env: "MOE_TOKEN"
