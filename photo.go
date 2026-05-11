@@ -11,16 +11,20 @@ import (
 )
 
 // uidKeys / seqKeys 为常见候选字段名，按优先级顺序探测。
-// 一次试错后即可定位真实字段名 — 调用失败时错误响应会带回 photo 实际拥有的 keys。
+// bot 实测 POST 的 photo dict 字段为 ['imagePath','mysekaiPhotoDecorationId','obtainedAt','seq']
+// —— 没有 userId。最可能的是 mysekaiPhotoDecorationId 作为上游 path 第一段。
 var (
-	uidKeys = []string{"userId", "user_id", "uid"}
+	uidKeys = []string{
+		"mysekaiPhotoDecorationId", "mysekai_photo_decoration_id",
+		"userMysekaiPhotoId", "mysekaiPhotoId", "photoId",
+		"userId", "user_id", "uid", "id",
+	}
 	seqKeys = []string{
 		"seq", "sequenceId", "sequence_id", "photoIndex",
-		"userMysekaiPhotoId", "mysekaiPhotoId", "photoId", "id",
 	}
 )
 
-// handlePhoto: POST /api/{region}/mysekai/photo
+// handlePhoto: GET/POST /api/{region}/mysekai/photo
 // body: photo dict (来自 bot mysekai_info.updatedResources.userMysekaiPhotos[i])
 // 返回: PNG bytes
 func (s *Server) handlePhoto(w http.ResponseWriter, r *http.Request, region string) {
@@ -38,18 +42,18 @@ func (s *Server) handlePhoto(w http.ResponseWriter, r *http.Request, region stri
 	uid, ok := pickStringField(photo, uidKeys)
 	if !ok {
 		writeDetail(w, http.StatusBadRequest, map[string]any{
-			"msg":         "missing uid field in photo body",
-			"tried":       uidKeys,
-			"photo_keys":  keysOf(photo),
+			"msg":   "missing uid field in photo body",
+			"tried": uidKeys,
+			"photo": photo, // 透传整张 dict 便于排查上游真实参数
 		})
 		return
 	}
 	seq, ok := pickStringField(photo, seqKeys)
 	if !ok {
 		writeDetail(w, http.StatusBadRequest, map[string]any{
-			"msg":         "missing seq field in photo body",
-			"tried":       seqKeys,
-			"photo_keys":  keysOf(photo),
+			"msg":   "missing seq field in photo body",
+			"tried": seqKeys,
+			"photo": photo,
 		})
 		return
 	}
@@ -102,12 +106,4 @@ func pickStringField(m map[string]any, keys []string) (string, bool) {
 		}
 	}
 	return "", false
-}
-
-func keysOf(m map[string]any) []string {
-	out := make([]string, 0, len(m))
-	for k := range m {
-		out = append(out, k)
-	}
-	return out
 }
