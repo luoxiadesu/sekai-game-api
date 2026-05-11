@@ -43,10 +43,6 @@ Project Sekai 游戏 API 网关，聚合 Haruki / Exmeaning 等公开上游，he
 
 | 路径 | 方法 |
 |---|---|
-| `/api/{region}/user/{uid}/suite` | GET |
-| `/api/{region}/user/{uid}/mysekai` | GET |
-| `/api/{region}/mysekai/upload_time` | POST |
-| `/api/{region}/mysekai/subscriptions` | PUT |
 | `/api/{region}/user/{uid}/send_boost` | POST |
 | `/api/{region}/create_account` | POST |
 | `/api/{region}/user/{uid}/ad_result` | GET |

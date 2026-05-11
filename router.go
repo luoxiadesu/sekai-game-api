@@ -70,12 +70,6 @@ func (s *Server) dispatch(w http.ResponseWriter, r *http.Request) {
 		case kind == "profile" && r.Method == http.MethodGet:
 			s.handleProfile(w, r, region, uid)
 			return
-		case kind == "suite" && r.Method == http.MethodGet:
-			s.handleStubSuite(w, r, region, uid)
-			return
-		case kind == "mysekai" && r.Method == http.MethodGet:
-			s.handleStubMysekai(w, r, region, uid)
-			return
 		case kind == "send_boost" && r.Method == http.MethodPost:
 			s.handleStubSendBoost(w, r, region, uid)
 			return
@@ -85,25 +79,10 @@ func (s *Server) dispatch(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// /api/{region}/mysekai/{action}
-	if len(parts) == 4 && parts[2] == "mysekai" {
-		switch parts[3] {
-		case "photo":
-			if r.Method == http.MethodPost {
-				s.handlePhoto(w, r, region)
-				return
-			}
-		case "upload_time":
-			if r.Method == http.MethodPost {
-				s.handleStubUploadTime(w, r, region)
-				return
-			}
-		case "subscriptions":
-			if r.Method == http.MethodPut {
-				s.handleStubSubscriptions(w, r, region)
-				return
-			}
-		}
+	// /api/{region}/mysekai/photo
+	if len(parts) == 4 && parts[2] == "mysekai" && parts[3] == "photo" && r.Method == http.MethodPost {
+		s.handlePhoto(w, r, region)
+		return
 	}
 
 	// /api/{region}/create_account
