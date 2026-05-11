@@ -29,8 +29,8 @@ Project Sekai 游戏 API 网关，聚合 Haruki / Exmeaning 等公开上游，he
 ### `GET /api/{region}/user/{uid}/profile`
 透传 query string（例如 `?use_cache=true`）。返回上游 profile JSON 原文。
 
-### `POST /api/{region}/mysekai/photo`
-请求体为一条 `userMysekaiPhotos` 元素（JSON 对象），从中提取 `uid`/`seq` 后拼出上游 image URL，返回 PNG bytes（`Content-Type: image/png`）。
+### `GET /api/{region}/mysekai/photo`
+请求体为一条 `userMysekaiPhotos` 元素（JSON 对象），从中提取 `uid`/`seq` 后拼出上游 image URL，返回 PNG bytes（`Content-Type: image/png`）。同时接受 POST 以便手工测试。
 
 候选字段名（按优先级，命中即用）：
 - `uid`：`userId` / `user_id` / `uid`

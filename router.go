@@ -80,7 +80,9 @@ func (s *Server) dispatch(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// /api/{region}/mysekai/photo
-	if len(parts) == 4 && parts[2] == "mysekai" && parts[3] == "photo" && r.Method == http.MethodPost {
+	// bot 实际走 GET + json body（request_gameapi 默认 method=GET），POST 仅为兼容。
+	if len(parts) == 4 && parts[2] == "mysekai" && parts[3] == "photo" &&
+		(r.Method == http.MethodGet || r.Method == http.MethodPost) {
 		s.handlePhoto(w, r, region)
 		return
 	}
